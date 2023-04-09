@@ -22,6 +22,12 @@ app.post('/web-crawl', async (req, res) => {
             url = req.body.url;
         }
 
+        console.log('url: ', url, req.body?.url);
+
+        if (url?.includes('http://') === false && url?.includes('https://') === false) {
+            url = 'http://' + url;
+        }
+
         if (!url) {
             return res.status(422).send({ message: "url is required" });
         }
