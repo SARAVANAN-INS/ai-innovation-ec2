@@ -1,6 +1,7 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
 const bodyParser = require('body-parser');
+const cheerio = require('cheerio');
 const app = express();
 
 // body parser configuration
@@ -44,6 +45,23 @@ app.post('/web-crawl', async (req, res) => {
             page.title(),
             page.evaluate(() => document.body.textContent),
         ];
+
+        const htmlContent = await page.content();
+        const $ = cheerio.load(htmlContent);
+        // console.log('htmlContent', $('body').contents());
+        let text = '';
+        $('body').contents()
+            .not('script, style, noscript, iframe')
+            .each((i, el) => {
+                let html = $(el).html();
+                text = html.replace(/<[^>]*>/g, ' ').trim().replace(/\s+/g, ' ');
+            });
+
+
+        console.log("text");
+        console.log(text);
+        text = text.replace(/\s+/g, " ").trim();
+
         const _promisesResponses = await Promise.all(_promises);
         await browser.close();
         const _response = {
@@ -51,6 +69,7 @@ app.post('/web-crawl', async (req, res) => {
             imgs: _promisesResponses[1],
             title: _promisesResponses[2],
             content: _promisesResponses[3],
+            text: text,
         };
         return res.status(200).send(_response);
     }
