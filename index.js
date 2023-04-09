@@ -27,6 +27,7 @@ app.post('/web-crawl', async (req, res) => {
     console.log('url: ', url, req.body?.url);
 
     const browser = await puppeteer.launch({
+        args: ['--no-sandbox'],
         userDataDir: '/tmp',
     }).catch((error) => {
         console.error('Failed to launch browser: ', error);
