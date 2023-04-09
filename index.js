@@ -7,7 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const port = 8081;
+const port = 80;
 
 app.get('/', (req, res) => {
     res.send('AI Innovation ec2 instance runung on port 8081');
